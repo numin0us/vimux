@@ -85,7 +85,7 @@ set shell=/bin/bash
 set number
 
 "" CLIPBOARD:
-set clipboard+=unnamed
+set clipboard=unnamedplus
 
 "" KEY BINDINGS:
 map <C-n> :NERDTreeToggle<CR>
@@ -168,6 +168,32 @@ map ,g :YcmCompleter GoToDefinitionElseDeclaration<CR>
 " Buffer Switching:
 nnoremap <F5> :buffers<CR>:buffer<Space>
 
+" Paste toggling
+function! WrapForTmux(s)
+  if !exists('$TMUX')
+    return a:s
+  endif
+
+  let tmux_start = "\<Esc>Ptmux;"
+  let tmux_end = "\<Esc>\\"
+
+  return tmux_start . substitute(a:s, "\<Esc>", "\<Esc>\<Esc>", 'g') . tmux_end
+endfunction
+
+let &t_SI .= WrapForTmux("\<Esc>[?2004h")
+let &t_EI .= WrapForTmux("\<Esc>[?2004l")
+
+function! XTermPasteBegin()
+  set pastetoggle=<Esc>[201~
+  set paste
+  return ""
+endfunction
+
+inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
+
+"Buffer switch via tabs
+nnoremap  <silent>   <tab>  :if &modifiable && !&readonly && &modified <CR> :write<CR> :endif<CR>:bnext<CR>
+nnoremap  <silent> <s-tab>  :if &modifiable && !&readonly && &modified <CR> :write<CR> :endif<CR>:bprevious<CR>
 
 "" WEB STACK Autoindent
 "au BufNewFile,BufRead *.js, *.html, *.css
@@ -228,7 +254,7 @@ filetype plugin indent on    " required
 "let g:solarized_termtrans = 1
 set background=dark
 "let g:gruvbox_transparent_bg=1
-silent! colo gruvbox
+colo gruvbox
 
 " Airline Configuration:
 let g:airline#extensions#tabline#enabled = 1

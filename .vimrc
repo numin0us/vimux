@@ -254,7 +254,7 @@ filetype plugin indent on    " required
 "let g:solarized_termtrans = 1
 set background=dark
 "let g:gruvbox_transparent_bg=1
-colo gruvbox
+"colo gruvbox
 
 " Airline Configuration:
 let g:airline#extensions#tabline#enabled = 1
